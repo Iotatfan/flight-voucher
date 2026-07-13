@@ -1,4 +1,4 @@
-package backend
+package main
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"iotatfan.com/airline-voucher/config"
 	"iotatfan.com/airline-voucher/internal/voucher"
+	"iotatfan.com/airline-voucher/internal/voucher/models"
 )
 
 const (
@@ -25,6 +26,7 @@ const (
 
 func handleRequests() {
 	db := config.InitDB()
+	config.MigrateDB(db, &models.Voucher{})
 
 	g := gin.Default()
 	voucher.Register(g, db)

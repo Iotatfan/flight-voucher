@@ -6,6 +6,7 @@ import (
 )
 
 func SetVoucherRoutes(g *gin.Engine, h handler.VoucherHandler) {
+	g.Use(CORSMiddleware())
 	g.POST("/api/check", h.CheckFlight)
 	g.POST("/api/generate", h.GenerateRandomSeats)
 }
