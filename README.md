@@ -38,6 +38,21 @@
 
    ---
 
+   ## 🗄️ Architecture & System Rules
+
+   To meet the core assessment requirements, the application implements the following business logic rules:
+
+   ### 1. Unique Voucher Restrictions
+   * **Frontend Guardrail:** Clicking "Generate Vouchers" first triggers a request to `POST /api/check`. If vouchers exist, generation is blocked, and an error message is displayed.
+   * **Database Guardrail:** To prevent race conditions and ensure query safety, a **Composite Unique Key** constraint is placed on `(flight_number, flight_date)` within the SQLite schema. Duplicate generations for the same flight date will fail safely.
+
+   ### 2. Aircraft Seating Layouts
+   The backend verifies and randomizes exactly 3 unique, non-repeating seats using the structural rules defined by the aircraft type:
+   * **ATR:** Rows 1–18, Seats: `A, C, D, F` (Excludes `B` and `E`).
+   * **Airbus 320 / Boeing 737 Max:** Rows 1–32, Seats: `A, B, C, D, E, F`.
+
+   ---
+
    ## 📦 Installing Dependencies
 
    ### Backend
