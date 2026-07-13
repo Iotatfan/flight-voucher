@@ -22,11 +22,26 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
     const [errorMessage, setErrorMessage] = useState('')
     const [seats, setSeats] = useState<string[]>([])
 
+    const getLocalDateString = () => {
+        const today = new Date()
+        const yyyy = today.getFullYear()
+        const mm = String(today.getMonth() + 1).padStart(2, '0')
+        const dd = String(today.getDate()).padStart(2, '0')
+        return `${yyyy}-${mm}-${dd}`
+    }
+    const today = getLocalDateString()
+
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
         setStatus('loading')
         setErrorMessage('')
         setSeats([])
+
+        if (date < today) {
+            setErrorMessage('Flight date cannot be in the past')
+            setStatus('error')
+            return
+        }
 
         try {
             // Step 1: check if flight already exists
@@ -131,6 +146,7 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             id="flight-date"
                             type="date"
                             value={date}
+                            min={today}
                             onChange={(e) => setDate(e.target.value)}
                             required
                             className="border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
