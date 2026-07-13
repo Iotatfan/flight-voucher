@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"iotatfan.com/airline-voucher/internal/voucher/models"
 	"iotatfan.com/airline-voucher/internal/voucher/service"
@@ -45,11 +47,19 @@ func (h *VoucherHandler) GenerateRandomSeats(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		returnJSONResponse(c, err.Error(), nil, 400, true)
+		return
 	}
 
 	result, err := h.voucherService.GenerateRandomSeats(req.Name, req.ID, req.FlightNumber, req.Date, req.Aircraft)
 	if err != nil {
-		returnJSONResponse(c, err.Error(), nil, 500, true)
+		statusCode := 500
+		if errors.Is(err, models.ErrVoucherAlreadyExists) {
+			statusCode = 409
+		} else if errors.Is(err, models.ErrInvalidAircraftType) {
+			statusCode = 400
+		}
+		returnJSONResponse(c, err.Error(), nil, statusCode, true)
+		return
 	}
 
 	c.JSON(200, result)

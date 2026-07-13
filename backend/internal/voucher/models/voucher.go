@@ -1,5 +1,11 @@
 package models
 
+import "errors"
+
+var ErrVoucherAlreadyExists = errors.New("vouchers already generated for this flight on this date")
+var ErrInvalidAircraftType = errors.New("invalid aircraft type")
+var ErrFewerThan3SeatsAvailable = errors.New("aircraft layout has fewer than 3 seats")
+
 type Voucher struct {
 	ID           int64  `gorm:"primaryKey;autoIncrement;column:id"`
 	CrewName     string `gorm:"type:text;not null;column:crew_name"`
@@ -11,34 +17,4 @@ type Voucher struct {
 	Seat2        string `gorm:"type:text;not null;column:seat2"`
 	Seat3        string `gorm:"type:text;not null;column:seat3"`
 	Created_at   string `gorm:"type:timestamp;autoCreateTime;not null;column:created_at"`
-}
-
-type AircraftLayout struct {
-	MinRow      int
-	MaxRow      int
-	SeatLetters []string
-}
-
-const (
-	AircraftATR       = "ATR"
-	AircraftAirbus320 = "Airbus 320"
-	AircraftBoeing737 = "Boeing 737 Max"
-)
-
-var AircraftConfigs = map[string]AircraftLayout{
-	AircraftATR: {
-		MinRow:      1,
-		MaxRow:      18,
-		SeatLetters: []string{"A", "C", "D", "F"}, // No B or E
-	},
-	AircraftAirbus320: {
-		MinRow:      1,
-		MaxRow:      32,
-		SeatLetters: []string{"A", "B", "C", "D", "E", "F"},
-	},
-	AircraftBoeing737: {
-		MinRow:      1,
-		MaxRow:      32,
-		SeatLetters: []string{"A", "B", "C", "D", "E", "F"},
-	},
 }

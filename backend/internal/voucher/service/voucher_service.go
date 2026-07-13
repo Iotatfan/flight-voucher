@@ -5,6 +5,7 @@ import (
 	"math/rand/v2"
 	"time"
 
+	aircraftModels "iotatfan.com/airline-voucher/internal/aircraft/models"
 	"iotatfan.com/airline-voucher/internal/voucher/models"
 	"iotatfan.com/airline-voucher/internal/voucher/repository"
 )
@@ -34,31 +35,35 @@ func (s *voucherService) CheckFlight(flightNumber string, date string) (models.C
 }
 
 func (s *voucherService) GenerateRandomSeats(name string, id string, flightNumber string, date string, aircraft string) (models.GenerateRandomSeatsResponse, error) {
-	layout, exists := models.AircraftConfigs[aircraft]
+	layout, exists := aircraftModels.AircraftConfigs[aircraft]
 	if !exists {
-		return models.GenerateRandomSeatsResponse{}, fmt.Errorf("invalid aircraft type: %s", aircraft)
+		return models.GenerateRandomSeatsResponse{}, models.ErrInvalidAircraftType
 	}
 
-	generatedSeats := make(map[string]bool)
-	var result []string
+	alreadyExists, err := s.voucherRepo.CheckFlight(flightNumber, date)
+	if err != nil {
+		return models.GenerateRandomSeatsResponse{}, err
+	}
+	if alreadyExists {
+		return models.GenerateRandomSeatsResponse{}, models.ErrVoucherAlreadyExists
+	}
 
-	for len(result) < 3 {
-		row := rand.IntN(layout.MaxRow-layout.MinRow+1) + layout.MinRow
-
-		letterIndex := rand.IntN(len(layout.SeatLetters))
-		letter := layout.SeatLetters[letterIndex]
-
-		seatCode := fmt.Sprintf("%d%s", row, letter)
-		if !generatedSeats[seatCode] {
-			exists, err := s.voucherRepo.CheckSeat(seatCode, date)
-			if err != nil {
-				return models.GenerateRandomSeatsResponse{}, err
-			}
-			if !exists {
-				generatedSeats[seatCode] = true
-				result = append(result, seatCode)
-			}
+	var availableSeats []string
+	for row := layout.MinRow; row <= layout.MaxRow; row++ {
+		for _, letter := range layout.SeatLetters {
+			availableSeats = append(availableSeats, fmt.Sprintf("%d%s", row, letter))
 		}
+	}
+
+	if len(availableSeats) < 3 {
+		return models.GenerateRandomSeatsResponse{}, models.ErrFewerThan3SeatsAvailable
+	}
+
+	indices := rand.Perm(len(availableSeats))
+	result := []string{
+		availableSeats[indices[0]],
+		availableSeats[indices[1]],
+		availableSeats[indices[2]],
 	}
 
 	voucher := models.Voucher{
@@ -73,13 +78,13 @@ func (s *voucherService) GenerateRandomSeats(name string, id string, flightNumbe
 		Created_at:   time.Now().Format(time.RFC3339),
 	}
 
-	err := s.voucherRepo.GenerateRandomSeats(voucher)
+	err = s.voucherRepo.GenerateRandomSeats(voucher)
 	if err != nil {
-		return models.GenerateRandomSeatsResponse{Success: false, Seats: nil}, err
+		return models.GenerateRandomSeatsResponse{Success: false, Seats: nil}, models.ErrVoucherAlreadyExists
 	}
 
 	return models.GenerateRandomSeatsResponse{
 		Success: true,
-		Seats:   []string{voucher.Seat1, voucher.Seat2, voucher.Seat3},
+		Seats:   result,
 	}, nil
 }
