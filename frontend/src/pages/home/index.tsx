@@ -31,6 +31,16 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
     }
     const today = getLocalDateString()
 
+    function handleFlightNumberChange(value: string) {
+        const sanitized = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+        setFlightNumber(sanitized)
+    }
+
+    function handleCrewIdChange(value: string) {
+        const sanitized = value.replace(/[^a-zA-Z0-9]/g, '')
+        setCrewId(sanitized)
+    }
+
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
         setStatus('loading')
@@ -104,22 +114,22 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             value={crewName}
                             onChange={(e) => setCrewName(e.target.value)}
                             required
-                            className="border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                         />
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <label htmlFor="flight-number" className="text-sm font-medium text-slate-700">
+                        <label htmlFor="crew-id" className="text-sm font-medium text-slate-700">
                             Crew ID
                         </label>
                         <input
                             id="crew-id"
                             type="text"
-                            placeholder="e.g. 123456"
+                            placeholder="e.g. ID123"
                             value={crewId}
-                            onChange={(e) => setCrewId(e.target.value)}
+                            onChange={(e) => handleCrewIdChange(e.target.value)}
                             required
-                            className="border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                         />
                     </div>
 
@@ -132,9 +142,11 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             type="text"
                             placeholder="e.g. GA-123"
                             value={flightNumber}
-                            onChange={(e) => setFlightNumber(e.target.value)}
+                            onChange={(e) => handleFlightNumberChange(e.target.value)}
+                            maxLength={6}
+                            pattern='^[A-Z]{2}\d{1,4}$'
                             required
-                            className="border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                         />
                     </div>
 
@@ -148,8 +160,21 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             value={date}
                             min={today}
                             onChange={(e) => setDate(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.currentTarget.showPicker()
+                                } catch (err) {
+
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const val = e.target.value
+                                if (val && val < today) {
+                                    setDate(today)
+                                }
+                            }}
                             required
-                            className="border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                         />
                     </div>
 
@@ -162,7 +187,7 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             value={aircraftType}
                             onChange={(e) => setAircraftType(e.target.value)}
                             required
-                            className="border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition bg-white"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition bg-white"
                         >
                             <option value="" disabled>Select aircraft type</option>
                             {aircraftTypes.map((type) => (
