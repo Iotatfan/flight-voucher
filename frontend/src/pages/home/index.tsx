@@ -201,7 +201,7 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                         disabled={status === 'loading'}
                         className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-wait text-white font-medium text-sm rounded-lg px-4 py-2.5 transition"
                     >
-                        {status === 'loading' ? 'Generating Voucher...' : 'Generate Voucher'}
+                        {status === 'loading' ? 'Generating Vouchers...' : 'Generate Vouchers'}
                     </button>
                 </form>
 
@@ -221,7 +221,7 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                 {status === 'already_exists' && (
                     <div className="mt-5 flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
                         <span>✕</span>
-                        <span>Flight <strong>{flightNumber.toUpperCase()}</strong> on {date} already has a voucher assigned.</span>
+                        <span>Vouchers have already been generated for flight <strong>{flightNumber.toUpperCase()}</strong> on {date}.</span>
                     </div>
                 )}
 

@@ -11,7 +11,7 @@ import (
 
 type VoucherService interface {
 	CheckFlight(flightNumber string, date string) (models.CheckFlightResponse, error)
-	GenerateRandomSeats(name string, id string, flightNumber string, date string, aircraft string) (models.GenerataRandomSeatsResponse, error)
+	GenerateRandomSeats(name string, id string, flightNumber string, date string, aircraft string) (models.GenerateRandomSeatsResponse, error)
 }
 
 type voucherService struct {
@@ -33,10 +33,10 @@ func (s *voucherService) CheckFlight(flightNumber string, date string) (models.C
 	return models.CheckFlightResponse{Exists: result}, nil
 }
 
-func (s *voucherService) GenerateRandomSeats(name string, id string, flightNumber string, date string, aircraft string) (models.GenerataRandomSeatsResponse, error) {
+func (s *voucherService) GenerateRandomSeats(name string, id string, flightNumber string, date string, aircraft string) (models.GenerateRandomSeatsResponse, error) {
 	layout, exists := models.AircraftConfigs[aircraft]
 	if !exists {
-		return models.GenerataRandomSeatsResponse{}, fmt.Errorf("invalid aircraft type: %s", aircraft)
+		return models.GenerateRandomSeatsResponse{}, fmt.Errorf("invalid aircraft type: %s", aircraft)
 	}
 
 	generatedSeats := make(map[string]bool)
@@ -52,7 +52,7 @@ func (s *voucherService) GenerateRandomSeats(name string, id string, flightNumbe
 		if !generatedSeats[seatCode] {
 			exists, err := s.voucherRepo.CheckSeat(seatCode, date)
 			if err != nil {
-				return models.GenerataRandomSeatsResponse{}, err
+				return models.GenerateRandomSeatsResponse{}, err
 			}
 			if !exists {
 				generatedSeats[seatCode] = true
@@ -75,10 +75,10 @@ func (s *voucherService) GenerateRandomSeats(name string, id string, flightNumbe
 
 	err := s.voucherRepo.GenerateRandomSeats(voucher)
 	if err != nil {
-		return models.GenerataRandomSeatsResponse{Success: false, Seats: nil}, err
+		return models.GenerateRandomSeatsResponse{Success: false, Seats: nil}, err
 	}
 
-	return models.GenerataRandomSeatsResponse{
+	return models.GenerateRandomSeatsResponse{
 		Success: true,
 		Seats:   []string{voucher.Seat1, voucher.Seat2, voucher.Seat3},
 	}, nil
