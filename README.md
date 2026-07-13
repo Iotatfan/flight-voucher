@@ -44,6 +44,7 @@
 
    ### 1. Unique Voucher Restrictions
    * **Frontend Guardrail:** Clicking "Generate Vouchers" first triggers a request to `POST /api/check`. If vouchers exist, generation is blocked, and an error message is displayed.
+   * **Backend Guardrail:** Inside `GenerateRandomSeats`, the service performs a second `CheckFlight` query **before** writing any data. If a voucher for the same `(flight_number, flight_date)` pair already exists, it immediately returns `ErrVoucherAlreadyExists` and the handler responds with **HTTP 409 Conflict** — regardless of what the frontend sent. An invalid aircraft type returns `ErrInvalidAircraftType` (**HTTP 400**), and insufficient seats return `ErrFewerThan3SeatsAvailable` (**HTTP 500**).
    * **Database Guardrail:** To prevent race conditions and ensure query safety, a **Composite Unique Key** constraint is placed on `(flight_number, flight_date)` within the SQLite schema. Duplicate generations for the same flight date will fail safely.
 
    ### 2. Aircraft Seating Layouts
