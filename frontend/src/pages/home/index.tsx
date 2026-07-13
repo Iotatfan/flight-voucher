@@ -113,8 +113,9 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             placeholder="e.g. John Smith"
                             value={crewName}
                             onChange={(e) => setCrewName(e.target.value)}
+                            disabled={status === 'loading'}
                             required
-                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                     </div>
 
@@ -128,8 +129,9 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             placeholder="e.g. ID123"
                             value={crewId}
                             onChange={(e) => handleCrewIdChange(e.target.value)}
+                            disabled={status === 'loading'}
                             required
-                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                     </div>
 
@@ -145,8 +147,9 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             onChange={(e) => handleFlightNumberChange(e.target.value)}
                             maxLength={6}
                             pattern='^[A-Z]{2}\d{1,4}$'
+                            disabled={status === 'loading'}
                             required
-                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                     </div>
 
@@ -173,8 +176,9 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                                     setDate(today)
                                 }
                             }}
+                            disabled={status === 'loading'}
                             required
-                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                     </div>
 
@@ -186,8 +190,9 @@ export function HomePage({ apiBaseUrl }: ShortenerPageProps) {
                             id="aircraft-type"
                             value={aircraftType}
                             onChange={(e) => setAircraftType(e.target.value)}
+                            disabled={status === 'loading'}
                             required
-                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition bg-white"
+                            className="border border-slate-400 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                             <option value="" disabled>Select aircraft type</option>
                             {aircraftTypes.map((type) => (
